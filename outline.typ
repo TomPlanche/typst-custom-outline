@@ -27,7 +27,10 @@
     color
   }
 
-  let headings = query(selector(heading))
+  // Only the headings that asked to be listed. `outlined: false` keeps one out, which is
+  // how a clean-cnam-template front-matter entry opts out, and how Typst's own
+  // `outline(title: ..)` titles ("Table des figures", ...) stay out of the tree.
+  let headings = query(selector(heading)).filter(h => h.outlined)
 
   // Filter by depth if max-depth is specified
   if max-depth != none {
@@ -94,6 +97,22 @@
     }
   }
 
+  // The number a page prints, or none when it prints none. Not the position of the page in
+  // the file: the two differ as soon as the document shifts its numbering
+  // (clean-cnam-template's `page.numbering-from` and `page.numbering-start`), and the
+  // outline has to agree with what the reader sees at the bottom of the page.
+  let page-number(loc) = {
+    let pattern = loc.page-numbering()
+    // A document that never sets a page numbering still deserves numbers to navigate by:
+    // fall back to the position of the page, as Typst's own outline does.
+    if pattern == none { return loc.page() }
+    // A numbering that renders to nothing means a page left unnumbered on purpose --
+    // clean-cnam-template does that for every page before `page.numbering-from`, so for
+    // the cover and the front matter by default. Print nothing here as well.
+    if numbering(pattern, ..counter(page).at(loc)) in (none, []) { return none }
+    counter(page).at(loc).first()
+  }
+
   // Build tree structure
   let build-tree(headings) = {
     let items = headings.enumerate().map(((i, h)) => {
@@ -102,7 +121,7 @@
         idx: i,
         text: if custom != none { [#custom] } else { h.body },
         level: h.level,
-        page: h.location().page(),
+        page: page-number(h.location()),
         location: h.location(),
         parent: none,
       )
@@ -205,7 +224,7 @@
   }
 
   // Find max page number to determine padding width
-  let max-page = lines.fold(0, (acc, line) => calc.max(acc, line.page))
+  let max-page = lines.fold(0, (acc, line) => if line.page == none { acc } else { calc.max(acc, line.page) })
   let max-page-width = str(max-page).len()
 
   // Render with clickable links
@@ -223,7 +242,7 @@
       // Lines with clickable links
       for line in lines {
         // Pad page number with leading spaces to align right
-        let page-str = str(line.page)
+        let page-str = if line.page == none { "" } else { str(line.page) }
         let padding = " " * (max-page-width - page-str.len())
         let padded-page = padding + page-str
 
