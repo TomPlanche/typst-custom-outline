@@ -84,3 +84,5 @@ The tree is built from `query(heading)`, so it follows whatever the document dec
 - `exclude-children` matches the title _as displayed_, so it matches the `customTitle` label when there is one.
 - The tree is content, not an `outline` element: the template's `colors.outline` does not reach it. Use the `color` parameter.
 - Tested with Typst 0.15.
+
+aled
