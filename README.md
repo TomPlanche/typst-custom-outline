@@ -15,6 +15,10 @@ Every line is a link to its heading, the page numbers are the ones the pages act
 > [!IMPORTANT]
 > This is not a standalone template. It is meant to be **paired with [clean-cnam-template](https://github.com/TomPlanche/clean-cnam-template) > v2**, whose `outline.custom` and `front-matter.pages` decide what this outline replaces and which page it lands on. It does work in a bare Typst document, but the integration below is what it was written for. `front-matter.pages`, `outlined: false` and the page numbering anchors need clean-cnam-template 2.0.0 or later.
 
+## Inspiration
+
+The tree structure visualization is inspired by the document structure representation from [Grégoire Gamichon's thesis](https://gregoire.broadcastingfuture.online/docs/memoire_g_gamichon_site.pdf) (ESAD Reims, 2022), translated into functional code using Unicode box-drawing characters.
+
 ## Usage
 
 `outline.typ` is a single file, not a published package: copy it next to your document.
