@@ -246,11 +246,12 @@
         let padding = " " * (max-page-width - page-str.len())
         let padded-page = padding + page-str
 
-        box(width: 100%)[
-          #text(font: symbol-font)[#raw(line.prefix, block: false, lang: none)]#link(line.location)[#text(font: text-font)[#line.text]]
+        // The whole row is the link, so the dots and the page number are clickable too
+        link(line.location, box(width: 100%)[
+          #text(font: symbol-font)[#raw(line.prefix, block: false, lang: none)]#text(font: text-font)[#line.text]
           #box(width: 1fr, if use-dots { repeat[.] } else { h(0pt) })
           #text(font: number-font)[#padded-page]
-        ]
+        ])
         linebreak()
       }
     }
